@@ -130,8 +130,9 @@ func (m *Menu) SelectItem() {
 
 	if m.Type == 1 {
 		m.SingleSelect = m.CursorPos + (m.View.CurrentPage * m.View.PageSize)
-		m.WipeScreen()
 		m.Done = true
+		m.WipeScreen()
+		m.MenuItems[m.SingleSelect].Selected = !m.MenuItems[pos].Selected
 		return
 	}
 
@@ -172,8 +173,8 @@ func (m *Menu) Render() {
 		output += t
 		m.View.CurrentPageSize += 1
 	}
-	if m.CursorPos == size {
-		output += fmt.Sprintf("\u001b[33m   > \u001b[0m")
+	if m.CursorPos == m.View.CurrentPageSize {
+		output += "\u001b[33m   > \u001b[0m"
 	} else {
 		output += "     "
 	}
@@ -246,12 +247,12 @@ func main() {
 
 	fmt.Print("\033[?25l")
 
-	items := make([]MenuItem, 21)
+	items := make([]MenuItem, 8)
 	for i := 0; i < len(items); i++ {
 		items[i] = MenuItem{Name: fmt.Sprintf("Option %d", i+1)}
 	}
 
-	menu := NewMenu("Choose an Option:", "multi")
+	menu := NewMenu("Choose an Option:", "single")
 	menu.AddItems(items)
 	menu.Render()
 
